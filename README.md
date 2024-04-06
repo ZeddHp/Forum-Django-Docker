@@ -5,7 +5,7 @@ This project is built using Django and serves as a forum application.
 
 ## Clone the Repository
 To get started, follow these steps to clone the repository to your local machine.
-Create a folder where you want this repo on you local machine and navigate there using cmd.
+Create a folder where you want this repo on your local machine and navigate there using cmd.
 
 ```bash
 git clone https://github.com/ZeddHp/Forum-Django-Docker.git
