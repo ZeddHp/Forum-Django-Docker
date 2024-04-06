@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% include 'header.html' %}
+    <meta charset="UTF-8" />
+    <title>All Posts</title>
+    <link rel="stylesheet" href="{% static 'posts.css' %}" />
+  </head>
+  <body>
+    <h1>All Posts</h1>
+    <section class="posts">
+      <ul>
+        {% for post in posts %}
+        <li class="post-section">
+          <h2 class="post-title">{{ post.title }}</h2>
+          <p class="post-content">{{ post.content }}</p>
+          <p class="post-author">Author: {{ post.author }}</p>
+          <hr class="divider" />
+          <section class="comments-section">
+            <h3>Comments:</h3>
+            <ul>
+              {% for comment in post.comment_set.all %}
+              <li class="comment">{{ comment.content }}</li>
+              {% endfor %}
+            </ul>
+          </section>
+
+          <form
+            class="add-comment-form"
+            action="{% url 'add_comment' post.id %}"
+            method="post"
+          >
+            {% csrf_token %}
+            <button type="submit" class="add-comment">Add Comment</button>
+          </form>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+  </body>
+</html>

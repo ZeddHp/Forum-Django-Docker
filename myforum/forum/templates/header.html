@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'header.css' %}" />
+  </head>
+  <body>
+    <header class="navbar">
+      {% if user.is_authenticated %}
+      <div class="navbar-links">
+        <a href="{% url 'add_post' %}" class="nav-link add-post-link"
+          >Add Post</a
+        >
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="nav-button logout-button">Logout</button>
+        </form>
+      </div>
+      {% else %}
+      <div class="navbar-links">
+        <a href="{% url 'login' %}" class="nav-link login-link">Login</a>
+        <span class="separator">|</span>
+        <a href="{% url 'signup' %}" class="nav-link signup-link">Sign Up</a>
+      </div>
+      {% endif %}
+    </header>
+  </body>
+</html>

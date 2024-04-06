@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  {% include 'header.html' %}
+  <head>
+    <title>Forum Home</title>
+  </head>
+  <body>
+    <h1>Welcome to the Forum</h1>
+    {% if user.is_authenticated %}
+    <a href="{% url 'add_post' %}">Add Post</a>
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit">Logout</button>
+    </form>
+    {% else %}
+    <a href="{% url 'login' %}">Login</a> |
+    <a href="{% url 'signup' %}">Sign Up</a>
+    {% endif %}
+    <ul>
+      {% for post in posts %}
+      <li>{{ post.title }}</li>
+      <ul>
+        <li>{{ post.content }}</li>
+        <li>Author: {{ post.author.username }}</li>
+        <li>
+          Comments:
+          <ul>
+            {% for comment in post.comment_set.all %}
+            <li>{{ comment.content }} - {{ comment.author.username }}</li>
+            {% endfor %}
+          </ul>
+        </li>
+      </ul>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

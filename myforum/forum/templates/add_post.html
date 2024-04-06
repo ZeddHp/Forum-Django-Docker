@@ -1,0 +1,18 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  {% include 'header.html' %}
+  <head>
+    <title>Add Post</title>
+    <link rel="stylesheet" href="{% static 'add_post.css' %}" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Add Post</h1>
+      <form method="post">
+        {% csrf_token %} {{ form.as_p }}
+        <button type="submit" class="post-submit-button">Submit</button>
+      </form>
+    </div>
+  </body>
+</html>

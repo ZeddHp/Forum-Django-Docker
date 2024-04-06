@@ -1,0 +1,95 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    overflow-y: scroll;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .posts {
+    padding: 20px;
+  }
+  
+  .post-section {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+  }
+  
+  .post-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .post-content {
+    font-size: 16px;
+    color: #666;
+  }
+  
+  .post-author {
+    color: #888;
+  }
+  
+  .divider {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-top: 1px solid #ccc;
+  }
+  
+  .comments-section {
+    margin-top: 10px;
+  }
+  
+  .comment {
+    margin-bottom: 5px;
+  }
+  
+  .add-comment-form {
+    margin-top: 10px;
+  }
+  
+  button.add-comment {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button.add-comment:hover {
+    background-color: #0056b3;
+  }
+
+  ul {
+    list-style: none; 
+  }
+  
+  .posts ul {
+    padding: 0;
+    margin: 0;
+  }
+  .divider {
+    border-top: 1px solid #ccc; /* Style for the divider */
+    margin: 20px 0; /* Adjust margin as needed */
+  }
+  
+  ::-webkit-scrollbar {
+    width: 0; /* Hide scrollbar for Chrome, Safari, and Opera */
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent; /* Hide scrollbar track */
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: transparent; /* Hide scrollbar thumb */
+  }
