@@ -42,3 +42,12 @@ Follow these steps to set up the project on your local machine:
 
 5. **Access the Application:**
    Once the server is running, you can access the application in your web browser at `http://localhost:8000`.
+
+![image](https://github.com/ZeddHp/Forum-Django-Docker/assets/68005483/31f40827-f4ea-411a-ba5e-86cb84ca82e6)
+![image](https://github.com/ZeddHp/Forum-Django-Docker/assets/68005483/d7e2b580-542f-4d93-bee7-91ccc34c8505)
+![image](https://github.com/ZeddHp/Forum-Django-Docker/assets/68005483/78711393-c32a-4c9d-88cd-08bab184459d)
+![image](https://github.com/ZeddHp/Forum-Django-Docker/assets/68005483/c043d2c8-c332-4561-9e12-24cbe64b3f89)
+![image](https://github.com/ZeddHp/Forum-Django-Docker/assets/68005483/717f3cca-2927-4db9-a612-d375e25d69cb)
+
+
+
