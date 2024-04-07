@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{% static 'upload.css' %}" />
   </head>
   <body>
+    {% if user.is_authenticated %}
     <div class="container">
       <h1>Upload File</h1>
       <form method="post" enctype="multipart/form-data">
@@ -17,6 +18,9 @@
     {% if url %}
     <p>Uploaded file: <a href="{{ url }}">{{ url }}</a></p>
     {% endif %}
+    <br>
+    <a href="{% url 'view_files' %}">View Uploaded Files</a>
     </div>
-  </body>
+    {% endif %}  
+</body>
 </html>

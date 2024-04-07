@@ -6,7 +6,10 @@ from .forms import SignupForm, LoginForm
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
-
+from django.http import HttpResponseBadRequest
+from django.conf import settings
+from django.core.files.storage import default_storage
+import os
 
 def index(request):
     return redirect('login')
@@ -90,12 +93,22 @@ def add_comment(request, post_id):
     # Pass the form to the template context along with the post_id
     return render(request, 'add_comment.html', {'form': form, 'post_id': post_id})
 
-#For file upload
+# For file upload
 def upload(request):
     context = {}
     if request.method == 'POST':
         uploaded_file = request.FILES['document']
+        allowed_extensions = ['.pdf', '.txt', '.jpeg', '.jpg', '.png']
+        ext = os.path.splitext(uploaded_file.name)[1]
+        if ext.lower() not in allowed_extensions:
+            return HttpResponseBadRequest("Unsupported file type. Only PDF, TXT, JPEG, JPG, and PNG files are allowed.")
+        
         fs = FileSystemStorage()
         name = fs.save(uploaded_file.name, uploaded_file)
         context['url'] = fs.url(name)
     return render(request, 'upload.html', context)
+
+# For viewing uploaded files
+def view_files(request):
+    uploaded_files = default_storage.listdir('')[1]
+    return render(request, 'view_files.html', {'uploaded_files': uploaded_files})
