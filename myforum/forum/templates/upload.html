@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  {% include 'header.html' %}
+  <head>
+    <title>Upload File</title>
+    <link rel="stylesheet" href="{% static 'upload.css' %}" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Upload File</h1>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="document">
+        <button type="submit">Upload file</button>
+    </form>
+    {% if url %}
+    <p>Uploaded file: <a href="{{ url }}">{{ url }}</a></p>
+    {% endif %}
+    </div>
+  </body>
+</html>
