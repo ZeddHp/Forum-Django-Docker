@@ -20,10 +20,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-z-b7jg_u+g&2!q&-socy&pa6j2r#m_43%+vhaz=2=pff1wrmv8'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'optional-default-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# !TODO Change to False when deploying
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -101,6 +101,20 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# Specifying password hashing algorithm
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',  # Prefered hasher
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+]
+
+# Enforcing HTTPS
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 
 # Internationalization
