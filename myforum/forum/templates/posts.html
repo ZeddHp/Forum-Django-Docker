@@ -9,6 +9,12 @@
   </head>
   <body>
     <h1>All Posts</h1>
+    <!-- Download PDF Button -->
+    <div class="download-pdf">
+      <a href="{% url 'posts_pdf' %}" class="download-pdf-button"
+        >Download Posts as PDF</a
+      >
+    </div>
     <section class="posts">
       <ul>
         {% for post in posts %}
