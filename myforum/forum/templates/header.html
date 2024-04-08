@@ -10,10 +10,23 @@
     <header class="navbar">
       {% if user.is_authenticated %}
       <div class="navbar-links">
-        <a href="{% url 'add_post' %}" class="nav-link add-post-link"
-          >Add Post</a
-        >
-        <form method="post" action="{% url 'logout' %}">
+        <!-- Dropdown for Posts -->
+        <div class="dropdown">
+          <button class="dropbtn">Posts</button>
+          <div class="dropdown-content">
+            <a href="{% url 'posts' %}">View Posts</a>
+            <a href="{% url 'add_post' %}">Add Post</a>
+          </div>
+        </div>
+        <!-- Dropdown for Files -->
+        <div class="dropdown">
+          <button class="dropbtn">Files</button>
+          <div class="dropdown-content">
+            <a href="{% url 'view_files' %}">View Files</a>
+            <a href="{% url 'upload' %}">Upload File</a>
+          </div>
+        </div>
+        <form method="post" action="{% url 'logout' %}" class="logout-form">
           {% csrf_token %}
           <button type="submit" class="nav-button logout-button">Logout</button>
         </form>
