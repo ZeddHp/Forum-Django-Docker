@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    {% include 'header.html' %}
+<head>
+    <title>Uploaded Files</title>
+    <link rel="stylesheet" href="{% static 'upload.css' %}" />
+</head>
+<body>
+    <h1>Uploaded Files</h1>
+    {% if user.is_authenticated %}
+    <ul>
+        {% for file_name in uploaded_files %}
+            <li><a href="{{ MEDIA_URL }}{{ file_name }}">{{ file_name }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    You need to <a href="{% url 'login' %}" class="have-account-link">login.</a>
+    {% endif %}
+</body>
+</html>
