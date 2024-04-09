@@ -1,0 +1,19 @@
+version: '3.12'
+
+services:
+  django:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - static_volume:/myforum/staticfiles
+  web:
+    image: python-django
+    volumes:
+      - sqlite_data:/myforum/db.sqlite3
+  
+
+
+volumes:
+  static_volume:
+  sqlite_data:
