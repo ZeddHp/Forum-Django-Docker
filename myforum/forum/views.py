@@ -12,6 +12,7 @@ from django.core.files.storage import default_storage
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 import os
+import re
 
 
 def index(request):
@@ -69,7 +70,11 @@ def add_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
+            # Sanitize the input
+            sanitized_content = sanitize_content(form.cleaned_data['content'])
+
             post = form.save(commit=False)
+            post.content = sanitized_content
             post.author = request.user
             post.save()
             return redirect('posts')
@@ -151,3 +156,9 @@ def generate_pdf(request):
     p.showPage()
     p.save()
     return response
+
+
+def sanitize_content(content):
+    # Remove any IP addresses
+    sanitized_content = re.sub(r'\b(?:\d{1,3}\.){3}\d{1,3}\b', '', content)
+    return sanitized_content
