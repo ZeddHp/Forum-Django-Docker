@@ -14,7 +14,6 @@ from pathlib import Path
 import os
 
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,23 +25,25 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'optional-default-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # !TODO Change to False when deploying
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] #'127.0.0.1', 'localhost'
+ALLOWED_HOSTS = ['*']
+
+CSRF_TRUSTED_ORIGINS = ['https://*.a.run.app']
 
 # Not Enforcing HTTPS
 
 SECURE_SSL_REDIRECT = False
-#if not DEBUG:-let it be for dev and prod
-SESSION_COOKIE_SECURE = False # Set to True for HTTPS
-SESSION_COOKIE_HTTPONLY = True # Set to True for HTTP-only cookie
+# if not DEBUG:-let it be for dev and prod
+SESSION_COOKIE_SECURE = False  # Set to True for HTTPS
+SESSION_COOKIE_HTTPONLY = True  # Set to True for HTTP-only cookie
 SESSION_COOKIE_SAMESITE = 'Strict'  # Set SameSite attribute to Strict
 
 CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = True  # Set to True for HTTP-only CSRF cookie
 CSRF_COOKIE_SAMESITE = 'Strict'  # Set SameSite attribute to Strict
 
-X_POWERED_BY_HEADER = 'Custom Expensive Server'#we will not leak server info
+X_POWERED_BY_HEADER = 'Custom Expensive Server'  # we will not leak server info
 # Application definition
 
 INSTALLED_APPS = [
@@ -59,6 +60,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'middleware.remove_powered_by.RemovePoweredByMiddleware',  # Custom middleware
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -67,7 +69,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'csp.middleware.CSPMiddleware',
 ]
-
 
 
 ROOT_URLCONF = 'myforum.urls'
@@ -129,8 +130,6 @@ PASSWORD_HASHERS = [
 ]
 
 
-
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -146,9 +145,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'#used in Dev
-#STATICFILES_DIRS = [ os.path.join(BASE_DIR,'static') ] #used in Dev
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static') #used in prod
+STATIC_URL = '/static/'  # used in Dev
+# STATICFILES_DIRS = [ os.path.join(BASE_DIR,'static') ] #used in Dev
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # used in prod
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/view_files/'
@@ -163,10 +164,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CSP_DEFAULT_SRC = ("'self'",)
 CSP_SCRIPT_SRC = ("'self'",)
 CSP_STYLE_SRC = ("'self'", STATIC_URL,)
-CSP_IMG_SRC = ("'self'","data:",)
+CSP_IMG_SRC = ("'self'", "data:",)
 CSP_FONT_SRC = ("'self'",)
 CSP_FRAME_SRC = ("'none'",)
 CSP_FORM_ACTION = ("'self'",)
 CSP_FRAME_ANCESTORS = ("'none'",)
 CSP_INCLUDE_NONCE_IN = ['script-src']
-
