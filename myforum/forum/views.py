@@ -106,7 +106,7 @@ def upload(request):
         fs = FileSystemStorage()
         name = fs.save(uploaded_file.name, uploaded_file)
         context['url'] = fs.url(name)
-    return render(request, 'upload.html', context)
+    return render(request, 'view_files.html', context)
 
 # For viewing uploaded files
 def view_files(request):
