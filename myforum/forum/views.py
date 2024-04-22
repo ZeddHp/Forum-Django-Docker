@@ -120,7 +120,17 @@ def upload(request):
 
 # For viewing uploaded files
 def view_files(request):
-    uploaded_files = default_storage.listdir('')[1]
+    # Path to the media folder
+    media_path = settings.MEDIA_ROOT
+
+    # Check if the media folder exists and if it contains any files
+    if os.path.exists(media_path) and os.listdir(media_path):
+        # Get a list of uploaded file names
+        uploaded_files = os.listdir(media_path)
+    else:
+        # If media folder does not exist or is empty, set uploaded_files to an empty list
+        uploaded_files = []
+
     return render(request, 'view_files.html', {'uploaded_files': uploaded_files})
 
 
