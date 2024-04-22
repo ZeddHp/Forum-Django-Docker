@@ -107,6 +107,9 @@ def upload(request):
     context = {}
     if request.method == 'POST':
         uploaded_file = request.FILES['document']
+        max_size = 5 * 1024 * 1024  # 5 MB in bytes
+        if uploaded_file.size > max_size:
+            return HttpResponseBadRequest("File size exceeds the maximum allowed limit of 5 MB.")
         allowed_extensions = ['.pdf', '.txt', '.jpeg', '.jpg', '.png']
         ext = os.path.splitext(uploaded_file.name)[1]
         if ext.lower() not in allowed_extensions:
@@ -115,6 +118,7 @@ def upload(request):
         fs = FileSystemStorage()
         name = fs.save(uploaded_file.name, uploaded_file)
         context['url'] = fs.url(name)
+        return redirect('view_files')
     return render(request, 'upload.html', context)
 
 
@@ -122,6 +126,7 @@ def upload(request):
 def view_files(request):
     uploaded_files = default_storage.listdir('')[1]
     return render(request, 'view_files.html', {'uploaded_files': uploaded_files})
+
 
 
 def generate_pdf(request):

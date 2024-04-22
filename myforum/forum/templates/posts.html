@@ -28,6 +28,7 @@
             <ul>
               {% for comment in post.comment_set.all %}
               <li class="comment">{{ comment.content }}</li>
+              <p class="comment-author">Author: {{ comment.author }}</p>
               {% endfor %}
             </ul>
           </section>

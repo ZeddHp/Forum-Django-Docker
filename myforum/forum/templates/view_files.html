@@ -7,15 +7,20 @@
     <link rel="stylesheet" href="{% static 'upload.css' %}" />
 </head>
 <body>
-    <h1>Uploaded Files</h1>
     {% if user.is_authenticated %}
-    <ul>
-        {% for file_name in uploaded_files %}
-            <li><a href="{{ MEDIA_URL }}{{ file_name }}">{{ file_name }}</a></li>
-        {% endfor %}
-    </ul>
+    <h1>Uploaded Files</h1>
+        {% if uploaded_files %}
+        <a href="{% url 'upload' %}" class="back-button">Go back</a>
+            <ul>
+                {% for file_name in uploaded_files %}
+                    <li><a href="{{ MEDIA_URL }}{{ file_name }}">{{ file_name }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <a href="{% url 'upload' %}"><p>No uploaded files.</p>.</a>
+        {% endif %}
     {% else %}
-    You need to <a href="{% url 'login' %}" class="have-account-link">login.</a>
+        <p>You need to <a href="{% url 'login' %}" class="have-account-link">login</a>.</p>
     {% endif %}
 </body>
 </html>

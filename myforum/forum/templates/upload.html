@@ -14,13 +14,15 @@
         {% csrf_token %}
         <input type="file" name="document">
         <button type="submit" class="upload">Upload file</button>
-    </form>
-    {% if url %}
-    <p>Uploaded file: <a href="{{ url }}">{{ url }}</a></p>
-    {% endif %}
-    <br>
-    <a href="{% url 'view_files' %}">View Uploaded Files</a>
+      </form>
+      {% if url %}
+      <p>Uploaded file: <a href="{{ url }}">{{ url }}</a></p>
+      {% endif %}
+      <br>
+      <a href="{% url 'view_files' %}">View Uploaded Files</a>
     </div>
+    {% else %}
+    <p>You need to <a href="{% url 'login' %}">login</a>.</p>
     {% endif %}  
-</body>
+  </body>
 </html>
