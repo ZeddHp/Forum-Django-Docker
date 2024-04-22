@@ -24,8 +24,8 @@ def main():
         ) from exc
 
     # Automatically open web browser if running the development server
-    if len(sys.argv) >= 2 and sys.argv[1] == "runserver":
-        Timer(1.5, open_browser).start()  # Adjust the delay as necessary
+    # if len(sys.argv) >= 2 and sys.argv[1] == "runserver":
+    #     Timer(1.5, open_browser).start()  # Adjust the delay as necessary
 
     execute_from_command_line(sys.argv)
 

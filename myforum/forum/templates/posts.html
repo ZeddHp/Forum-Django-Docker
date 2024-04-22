@@ -15,34 +15,86 @@
         >Download Posts as PDF</a
       >
     </div>
-    <section class="posts">
-      <ul>
-        {% for post in posts %}
-        <li class="post-section">
-          <h2 class="post-title">{{ post.title }}</h2>
-          <p class="post-content">{{ post.content}}</p>
-          <p class="post-author">Author: {{ post.author }}</p>
-          <hr class="divider" />
-          <section class="comments-section">
-            <h3>Comments:</h3>
-            <ul>
-              {% for comment in post.comment_set.all %}
-              <li class="comment">{{ comment.content }}</li>
-              {% endfor %}
-            </ul>
-          </section>
+    <!-- Pagination links -->
+    <div class="pagination">
+      <span class="step-links">
+        {% if posts.has_previous %}
+        <a href="?page=1">&laquo; First</a>
+        <a href="?page={{ posts.previous_page_number }}">Previous</a>
+        {% else %}
+        <span class="disabled">&laquo; First</span>
+        <span class="disabled">Previous</span>
+        {% endif %}
 
-          <form
-            class="add-comment-form"
-            action="{% url 'add_comment' post.id %}"
-            method="post"
-          >
-            {% csrf_token %}
-            <button type="submit" class="add-comment">Add Comment</button>
-          </form>
-        </li>
-        {% endfor %}
-      </ul>
+        <span class="current">
+          Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+        </span>
+
+        {% if posts.has_next %}
+        <a href="?page={{ posts.next_page_number }}">Next</a>
+        <a href="?page={{ posts.paginator.num_pages }}">Last &raquo;</a>
+        {% else %}
+        <span class="disabled">Next</span>
+        <span class="disabled">Last &raquo;</span>
+        {% endif %}
+      </span>
+    </div>
+    <section class="posts">
+      <!-- Posts table -->
+      <table class="posts-table">
+        <tbody>
+          {% for post in posts %}
+          <tr>
+            <td class="cell-item">
+              <div class="section-title">{{ post.title }}</div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="section-header">Content</div>
+              <div class="section-content">{{ post.content }}</div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="section-header">Datetime</div>
+              <div class="section-content">
+                {{ post.created_at | date:"F d, Y h:i A" }}
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="section-header">Author</div>
+              <div class="section-content">{{ post.author }}</div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="section-title">Comments</div>
+              <div class="">
+                <ul>
+                  {% for comment in post.comment_set.all %}
+                  <li>{{ comment.content }}</li>
+                  {% endfor %}
+                </ul>
+                <form
+                  class="add-comment-form"
+                  action="{% url 'add_comment' post.id %}"
+                  method="post"
+                >
+                  {% csrf_token %}
+                  <button type="submit" class="add-comment">Add Comment</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+
+          <td><hr class="divider" /></td>
+
+          {% endfor %}
+        </tbody>
+      </table>
     </section>
   </body>
 </html>

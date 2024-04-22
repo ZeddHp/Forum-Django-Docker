@@ -1,18 +1,23 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .forms import PostForm, CommentForm
-from .models import Post, Comment
-from .forms import SignupForm, LoginForm
-from django.contrib.auth import authenticate, login, logout
-from django.views.generic import TemplateView
-from django.core.files.storage import FileSystemStorage
-from django.http import HttpResponseBadRequest
-from django.conf import settings
-from django.core.files.storage import default_storage
-from django.http import HttpResponse
-from reportlab.pdfgen import canvas
+from io import BytesIO
 import os
 import re
+
+from django.conf import settings
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.core.files.storage import FileSystemStorage, default_storage
+from django.core.paginator import Paginator
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.shortcuts import redirect, render
+from django.views.generic import TemplateView
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+
+from .forms import CommentForm, LoginForm, PostForm, SignupForm
+from .models import Comment, Post
 
 
 def index(request):
@@ -102,6 +107,14 @@ def add_comment(request, post_id):
     return render(request, 'add_comment.html', {'form': form, 'post_id': post_id})
 
 
+def post_list(request):
+    all_posts = Post.objects.all()
+    paginator = Paginator(all_posts, 5)  # Paginate with 5 posts per page
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
+    return render(request, 'posts.html', {'posts': posts})
+
+
 # For file upload
 def upload(request):
     context = {}
@@ -135,36 +148,57 @@ def view_files(request):
 
 
 def generate_pdf(request):
-    # Create an HttpResponse object with the appropriate PDF headers.
+    # Create an in-memory PDF file
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="posts.pdf"'
 
-    # Create the PDF object, using the response object as its "file."
-    p = canvas.Canvas(response)
-
-    # Start with a Y position for the first post. Adjust as necessary.
-    y_position = 800
-    line_height = 15
+    # Create a buffer for the PDF
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
 
     # Fetch posts from the database
     posts = Post.objects.all()
 
+    # Define a style for the paragraph
+    styles = getSampleStyleSheet()
+    body_style = styles['BodyText']
+
+    # Create a list to hold the paragraphs
+    elements = []
+
+    # Initialize post counter
+    post_counter = 1
+
+    # Iterate through each post
     for post in posts:
-        # For each post, draw the title and content on the PDF.
-        p.drawString(100, y_position, f"Title: {post.title}")
-        y_position -= line_height
-        p.drawString(100, y_position, f"Content: {post.content}")
-        y_position -= line_height
-        p.drawString(100, y_position, f"Author: {post.author}")
-        y_position -= (line_height * 2)  # Add extra space before the next post
+        # Add post number
+        elements.append(Paragraph(f"<b>#{post_counter}</b>", body_style))
+        elements.append(Paragraph("<br/>", body_style))  # Add some space
 
-        # Check if we need to start a new page.
-        if y_position < 100:  # This threshold may need adjustment
-            p.showPage()
-            y_position = 800  # Reset Y position for the new page
+        # Add title, content, and author to the PDF
+        elements.append(Paragraph(f"<b>Title:</b> {post.title}", body_style))
+        elements.append(
+            Paragraph(f"<b>Content:</b> {post.content}", body_style))
+        elements.append(
+            Paragraph(f"<b>Create at:</b> {post.created_at}", body_style))
+        elements.append(Paragraph(f"<b>Author:</b> {post.author}", body_style))
+        elements.append(Paragraph("<br/>", body_style))  # Add some space
 
-    p.showPage()
-    p.save()
+        # Add divider between posts
+        elements.append(Paragraph("-" * 50, body_style))
+        elements.append(Paragraph("<br/>", body_style))  # Add some space
+
+        # Increment post counter
+        post_counter += 1
+
+    # Build the PDF
+    doc.build(elements)
+
+    # Write the buffer to the response
+    pdf = buffer.getvalue()
+    buffer.close()
+    response.write(pdf)
+
     return response
 
 
