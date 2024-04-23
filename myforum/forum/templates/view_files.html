@@ -1,26 +1,30 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-    {% include 'header.html' %}
-<head>
+  {% include 'header.html' %}
+  <head>
     <title>Uploaded Files</title>
     <link rel="stylesheet" href="{% static 'upload.css' %}" />
-</head>
-<body>
+  </head>
+  <body>
     {% if user.is_authenticated %}
-    <h1>Uploaded Files</h1>
-        {% if uploaded_files %}
-        <a href="{% url 'upload' %}" class="back-button">Go back</a>
-            <ul>
-                {% for file_name in uploaded_files %}
-                    <li><a href="{{ MEDIA_URL }}{{ file_name }}">{{ file_name }}</a></li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <a href="{% url 'upload' %}"><p>No uploaded files.</p>.</a>
+    <div class="container">
+        <h1>Uploaded Files</h1>
+        {% if file_name %}
+        <p>Uploaded file: <a href="{{ MEDIA_URL }}{{ file_name }}">{{ file_name }}</a></p>
         {% endif %}
+        <p><a href="{% url 'upload' %}" class="back-button">Go Back</a></p>
+        <ul>
+        {% for file_name in uploaded_files %}
+        <li><a href="{{ MEDIA_URL }}{{ file_name }}">{{ file_name }}</a></li>
+        {% endfor %}
+        </ul>
+        {% if not uploaded_files %}
+        <p>No files uploaded yet.</p>
+        {% endif %}
+    </div>
     {% else %}
-        <p>You need to <a href="{% url 'login' %}" class="have-account-link">login</a>.</p>
+    <p>You need to <a href="{% url 'login' %}" class="have-account-link">login.</a></p>
     {% endif %}
-</body>
+  </body>
 </html>

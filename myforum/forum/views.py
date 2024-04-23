@@ -104,10 +104,11 @@ def add_comment(request, post_id):
 
 # For file upload
 def upload(request):
-    context = {}
     if request.method == 'POST':
+        if 'document' not in request.FILES:
+            return HttpResponseBadRequest("Select file to upload.")
         uploaded_file = request.FILES['document']
-        max_size = 5 * 1024 * 1024  # 5 MB in bytes
+        max_size = 5 * 1024 * 1024
         if uploaded_file.size > max_size:
             return HttpResponseBadRequest("File size exceeds the maximum allowed limit of 5 MB.")
         allowed_extensions = ['.pdf', '.txt', '.jpeg', '.jpg', '.png']
@@ -117,15 +118,34 @@ def upload(request):
 
         fs = FileSystemStorage()
         name = fs.save(uploaded_file.name, uploaded_file)
-        context['url'] = fs.url(name)
+        file_url = fs.url(name)
+        
+        request.session['uploaded_file'] = name
         return redirect('view_files')
-    return render(request, 'upload.html', context)
+    return render(request, 'upload.html')
+
 
 
 # For viewing uploaded files
 def view_files(request):
-    uploaded_files = default_storage.listdir('')[1]
-    return render(request, 'view_files.html', {'uploaded_files': uploaded_files})
+    # Retrieve the uploaded file name from the session
+    file_name = request.session.get('uploaded_file', '')
+
+    # Path to the media folder
+    media_path = settings.MEDIA_ROOT
+
+    # Check if the media folder exists and if it contains any files
+    if os.path.exists(media_path) and os.listdir(media_path):
+        # Get a list of uploaded file names
+        uploaded_files = os.listdir(media_path)
+    else:
+        # If media folder does not exist or is empty, set uploaded_files to an empty list
+        uploaded_files = []
+
+    # Clear the file_name session variable
+    request.session['uploaded_file'] = None
+
+    return render(request, 'view_files.html', {'uploaded_files': uploaded_files, 'file_name': file_name})
 
 
 
