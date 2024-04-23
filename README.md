@@ -29,15 +29,15 @@ Follow these steps to set up the project on your local machine:
    Run database migrations to create the necessary tables in the database.
 
    ```bash
-   python manage.py makemigrations
-   python manage.py migrate
+   python myforum/manage.py makemigrations
+   python myforum/manage.py migrate
    ```
 
 4. **Start the Development Server:**
    Start the Django development server to run the project locally.
 
    ```bash
-   python manage.py runserver
+   python myforum/manage.py runserver
    ```
 
 5. **Build and Run the Docker Container:**
