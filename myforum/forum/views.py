@@ -117,9 +117,13 @@ def post_list(request):
 
 # For file upload
 def upload(request):
-    context = {}
     if request.method == 'POST':
+        if 'document' not in request.FILES:
+            return HttpResponseBadRequest("Select file to upload.")
         uploaded_file = request.FILES['document']
+        max_size = 5 * 1024 * 1024
+        if uploaded_file.size > max_size:
+            return HttpResponseBadRequest("File size exceeds the maximum allowed limit of 5 MB.")
         allowed_extensions = ['.pdf', '.txt', '.jpeg', '.jpg', '.png']
         ext = os.path.splitext(uploaded_file.name)[1]
         if ext.lower() not in allowed_extensions:
@@ -127,12 +131,18 @@ def upload(request):
 
         fs = FileSystemStorage()
         name = fs.save(uploaded_file.name, uploaded_file)
-        context['url'] = fs.url(name)
-    return render(request, 'upload.html', context)
+        file_url = fs.url(name)
+
+        request.session['uploaded_file'] = name
+        return redirect('view_files')
+    return render(request, 'upload.html')
 
 
 # For viewing uploaded files
 def view_files(request):
+    # Retrieve the uploaded file name from the session
+    file_name = request.session.get('uploaded_file', '')
+
     # Path to the media folder
     media_path = settings.MEDIA_ROOT
 
@@ -144,7 +154,10 @@ def view_files(request):
         # If media folder does not exist or is empty, set uploaded_files to an empty list
         uploaded_files = []
 
-    return render(request, 'view_files.html', {'uploaded_files': uploaded_files})
+    # Clear the file_name session variable
+    request.session['uploaded_file'] = None
+
+    return render(request, 'view_files.html', {'uploaded_files': uploaded_files, 'file_name': file_name})
 
 
 def generate_pdf(request):
