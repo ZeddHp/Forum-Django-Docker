@@ -40,8 +40,17 @@ Follow these steps to set up the project on your local machine:
    python manage.py runserver
    ```
 
-5. **Access the Application:**
-   Once the server is running, you can access the application in your web browser at `http://localhost:8000`.
+5. **Build and Run the Docker Container:**
+   To run project with docker you need to build container and then run it.
+
+   ```bash
+   docker build --tag python-django .
+   docker run --publish 8000:8000 python-django
+   ```
+   If container is already built then you can just run:
+   ```bash
+   docker-compose up
+   ```
 
 ![image](https://github.com/ZeddHp/Forum-Django-Docker/assets/68005483/31f40827-f4ea-411a-ba5e-86cb84ca82e6)
 ![image](https://github.com/ZeddHp/Forum-Django-Docker/assets/68005483/d7e2b580-542f-4d93-bee7-91ccc34c8505)
