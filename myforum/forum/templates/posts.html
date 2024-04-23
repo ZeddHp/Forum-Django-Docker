@@ -9,12 +9,14 @@
   </head>
   <body>
     <h1>All Posts</h1>
+
     <!-- Download PDF Button -->
     <div class="download-pdf">
       <a href="{% url 'posts_pdf' %}" class="download-pdf-button"
         >Download Posts as PDF</a
       >
     </div>
+
     <!-- Pagination links -->
     <div class="pagination">
       <span class="step-links">
@@ -39,11 +41,13 @@
         {% endif %}
       </span>
     </div>
+
     <section class="posts">
       <!-- Posts table -->
+
+      {% for post in posts %}
       <table class="posts-table">
         <tbody>
-          {% for post in posts %}
           <tr>
             <td class="cell-item">
               <div class="section-title">{{ post.title }}</div>
@@ -71,30 +75,33 @@
           </tr>
           <tr>
             <td>
-              <div class="section-title">Comments</div>
-              <div class="">
-                <ul>
-                  {% for comment in post.comment_set.all %}
-                  <li>{{ comment.content }}</li>
-                  {% endfor %}
-                </ul>
-                <form
-                  class="add-comment-form"
-                  action="{% url 'add_comment' post.id %}"
-                  method="post"
-                >
-                  {% csrf_token %}
-                  <button type="submit" class="add-comment">Add Comment</button>
-                </form>
+              <h3>Comments:</h3>
+              <form
+                class="add-comment-form"
+                action="{% url 'add_comment' post.id %}"
+                method="post"
+              >
+                {% csrf_token %}
+                <button type="submit" class="add-comment">Add Comment</button>
+              </form>
+              <div>
+                {% for comment in post.comment_set.all %}
+                <tr>
+                  <td class="comment-cell">
+                    <div class="section-header">
+                      Author: {{ comment.author }}
+                    </div>
+                    <div class="comment">{{ comment.content }}</div>
+                  </td>
+                </tr>
+                {% endfor %}
               </div>
             </td>
           </tr>
-
-          <td><hr class="divider" /></td>
-
-          {% endfor %}
         </tbody>
       </table>
+      <br />
+      {% endfor %}
     </section>
   </body>
 </html>
