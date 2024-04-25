@@ -20,6 +20,9 @@ urlpatterns = [
     path('posts/pdf/', generate_pdf, name='posts_pdf')
 ]
 
+# Define custom handler404 to render a specific template for 404 errors
+handler404 = 'forum.views.error_404_view'
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)

@@ -154,7 +154,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/view_files/'
 LOGIN_URL = '/login/'
-
+MAX_LOGIN_ATTEMPTS =3
+LOGIN_ATTEMPTS_TIMEOUT = 60  #this is 60 seconds. in real life set 300 seconds
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

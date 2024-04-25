@@ -12,6 +12,7 @@
       <h1>Login</h1>
       <form method="POST" class="login-form">
         {% csrf_token %}
+        <p>After 3 unsuccessful attempts Your account will be temporarily blocked.</p>
         <div class="input-group">
           <input type="text" id="username" name="username" required />
           <label for="username">Username</label>
