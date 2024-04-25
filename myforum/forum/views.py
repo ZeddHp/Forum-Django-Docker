@@ -2,13 +2,15 @@ from io import BytesIO
 import os
 import re
 
+from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage, default_storage
 from django.core.paginator import Paginator
-from django.http import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import redirect, render
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.generic import TemplateView
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -51,10 +53,25 @@ def user_login(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
+
+             # Check if the IP address has reached the maximum login attempts
+            ip_address = request.META.get('REMOTE_ADDR')
+            login_attempts_key = f'login_attempts_{ip_address}'
+            login_attempts = cache.get(login_attempts_key, 0)
+            if login_attempts >= settings.MAX_LOGIN_ATTEMPTS:
+                # Handle rate limit exceeded
+                return HttpResponseBadRequest("Rate limit exceeded. Please try again later.")
+            
             user = authenticate(request, username=username, password=password)
+            login_attempts += 1
             if user:
                 login(request, user)
+                # Reset the login attempts count for this IP address
+                cache.delete(login_attempts_key)
                 return redirect('posts')
+            else:
+                # Increment login attempts count for this IP address
+                cache.set(login_attempts_key, login_attempts + 1, timeout=settings.LOGIN_ATTEMPTS_TIMEOUT)
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
@@ -91,7 +108,7 @@ def add_post(request):
 # add comment page
 @login_required
 def add_comment(request, post_id):
-    post = Post.objects.get(pk=post_id)
+    post = get_object_or_404(Post, pk=post_id)
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -121,7 +138,7 @@ def upload(request):
         if 'document' not in request.FILES:
             return HttpResponseBadRequest("Select file to upload.")
         uploaded_file = request.FILES['document']
-        max_size = 5 * 1024 * 1024
+        max_size = 5 * 1024 * 1024 #Size limit 5 MB
         if uploaded_file.size > max_size:
             return HttpResponseBadRequest("File size exceeds the maximum allowed limit of 5 MB.")
         allowed_extensions = ['.pdf', '.txt', '.jpeg', '.jpg', '.png']
@@ -219,3 +236,11 @@ def sanitize_content(content):
     # Remove any IP addresses
     sanitized_content = re.sub(r'\b(?:\d{1,3}\.){3}\d{1,3}\b', '', content)
     return sanitized_content
+
+
+def error_404_view(request, exception):
+    return render(request, '404.html', status=404)
+
+def custom_csrf_failure_view(request, reason=""):
+    # Redirect the user to the login form
+    return HttpResponseRedirect(reverse('login'))
